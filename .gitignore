@@ -1,3 +1,6 @@
+.idea
+# Created by .ignore support plugin (hsz.mobi)
+### Python template
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -43,7 +46,10 @@ htmlcov/
 .cache
 nosetests.xml
 coverage.xml
+<<<<<<< HEAD
 *.cover
+=======
+*,cover
 .hypothesis/
 
 # Translations
@@ -89,7 +95,6 @@ ENV/
 
 # Spyder project settings
 .spyderproject
-.spyproject
 
 # Rope project settings
 .ropeproject
