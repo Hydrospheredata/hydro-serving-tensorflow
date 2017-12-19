@@ -8,9 +8,6 @@ from tf_runtime_service import TFRuntimeService
 from utils import *
 
 PORT = int(os.getenv("APP_GRPC_PORT", "9090"))
-MODEL_VERSION = os.getenv('MODEL_VERSION', "version")
-MODEL_NAME = os.getenv('MODEL_NAME', "name")
-MODEL_TYPE = os.getenv('MODEL_TYPE', "type")
 _ONE_DAY_IN_SECONDS = 60 * 60 * 24
 
 print("Importing TensorFlow model...")
