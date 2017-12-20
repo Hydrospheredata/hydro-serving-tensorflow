@@ -1,4 +1,5 @@
-FROM tensorflow/tensorflow:latest-py3
+ARG TF_IMAGE_VERSION=latest-py3
+FROM tensorflow/tensorflow:${TF_IMAGE_VERSION}
 
 ARG SIDECAR_VERSION=0.0.1
 

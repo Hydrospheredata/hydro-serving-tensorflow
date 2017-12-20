@@ -1,6 +1,7 @@
 import tensorflow as tf
 import numpy as np
 
+
 def convert_to_python(data):
     if isinstance(data, np.integer):
         return int(data)
@@ -38,4 +39,3 @@ def load_and_optimize(model_path):
             for out_name, out in sig.outputs.items():
                 signatures["outputs"][out_name] = temp_sess.graph.get_tensor_by_name(out_name)
         print("Loaded a model with signature: {}".format(signatures))
-

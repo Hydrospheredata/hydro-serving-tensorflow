@@ -16,7 +16,7 @@ sess, inputs, outputs = load_and_optimize("/model")
 if __name__ == '__main__':
     print("Runtime is ready to serve...")
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
-    hs.add_PredictionServiceServicer_to_server(TFRuntimeService("/model", "/contract/contract.protobin"), server)
+    hs.add_PredictionServiceServicer_to_server(TFRuntimeService("/model"), server)
     server.add_insecure_port(str(PORT))
     server.start()
     try:

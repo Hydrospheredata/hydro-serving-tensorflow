@@ -62,7 +62,7 @@ class RuntimeTests(unittest.TestCase):
     def test_runtime():
         server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
         hs.add_PredictionServiceServicer_to_server(
-            TFRuntimeService("test/models/tf_summator", "test/model_defs/tf_summator.protobin"),
+            TFRuntimeService("test/models/tf_summator"),
             server
         )
         server.add_insecure_port("[::]:9090")

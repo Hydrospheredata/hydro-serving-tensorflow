@@ -6,14 +6,13 @@ import tensorflow as tf
 
 
 class TFRuntimeService(hs.PredictionServiceServicer):
-    def __init__(self, model_path, model_def_path):
+    def __init__(self, model_path):
         self.model_path = model_path
-        self.model_def_path = model_def_path
 
-        self.model = LoadedModel.load(model_path, model_def_path)
+        self.model = LoadedModel.load(model_path)
 
     def Predict(self, request, context):
-        print(f"Received inference request: {request}")
+        print("Received inference request: {}".format(request))
         signature_name = request.model_spec.signature_name
         if signature_name in self.model.signatures:
             sig = self.model.signatures[signature_name]

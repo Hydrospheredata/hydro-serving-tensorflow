@@ -24,11 +24,7 @@ class LoadedModel:
                                                                   list(map(lambda x: str(x), self.signatures)))
 
     @staticmethod
-    def load(path: str, model_def_path: str):
-        model_def = hs.ModelContract()
-        with open(model_def_path, "rb") as f:
-            model_def.ParseFromString(f.read())
-
+    def load(path: str):
         session = tf.Session()
         meta_graph = tf.saved_model.loader.load(session, [tf.saved_model.tag_constants.SERVING], path)
         signatures = {}
@@ -47,6 +43,5 @@ class LoadedModel:
         model.model_path = path
         model.signatures = signatures
         model.session = session
-        model.contract = model_def
         print("Loaded a model: {}".format(model))
         return model
