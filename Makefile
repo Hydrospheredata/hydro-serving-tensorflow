@@ -17,8 +17,13 @@ run:
 	${PYTHON_EXEC} src/main.py
 
 .PHONY: test
-test:
+test: test-runtime
+
+test-runtime:
 	cd test && $(PYTHON_EXEC) test_tf_grpc.py
+
+test-docker:
+	cd test && $(PYTHON_EXEC) test_docker_runtime.py
 
 clean: clean-pyc
 

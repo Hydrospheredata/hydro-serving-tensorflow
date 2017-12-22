@@ -1,11 +1,16 @@
 import os
 from TensorflowRuntime import TensorflowRuntime
+import time
 
-PORT = os.getenv("APP_GRPC_PORT", "1123")
+PORT = os.getenv("APP_GRPC_PORT", "9090")
 
 if __name__ == '__main__':
-    runtime = TensorflowRuntime()
     print("Reading the model...")
-    runtime.load_service("/model")
+    runtime = TensorflowRuntime("/model")
     print("Runtime is ready to serve...")
-    runtime.run(port=PORT)
+    runtime.start(port=PORT)
+    try:
+        while True:
+            time.sleep(TensorflowRuntime._ONE_DAY_IN_SECONDS)
+    except KeyboardInterrupt:
+        runtime.stop()
