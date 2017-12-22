@@ -1,8 +1,8 @@
 import hydro_serving_grpc as hs
-
 from LoadedModel import LoadedModel
-
 import tensorflow as tf
+import utils
+import grpc
 
 
 class TFRuntimeService(hs.PredictionServiceServicer):
@@ -17,8 +17,9 @@ class TFRuntimeService(hs.PredictionServiceServicer):
         if signature_name in self.model.signatures:
             sig = self.model.signatures[signature_name]
         else:
-            print("Requested entry point ({}) is not in the graph. Using first available.".format(signature_name))
-            sig = list(self.model.signatures.values())[0]
+            context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
+            context.set_details("{} signature is not present in the model".format(signature_name))
+            return hs.PredictResponse()
         print("Using {} signature".format(sig.name))
         feed = {}
         for (k, v) in sig.inputs.items():
@@ -29,8 +30,10 @@ class TFRuntimeService(hs.PredictionServiceServicer):
 
         converted_results = {}
         for k, v in zip(sig.outputs.keys(), result):
+            original_tensor = utils.make_tensor_proto(v, dtype=sig.outputs[k].dtype, shape=sig.outputs[k].shape)
             tensor_proto = hs.TensorProto()
-            tensor_proto.ParseFromString(tf.contrib.util.make_tensor_proto(v).SerializeToString())
+            tensor_proto.ParseFromString(original_tensor.SerializeToString())
+            print("Answer: {}".format(tensor_proto))
             converted_results[k] = tensor_proto
 
         return hs.PredictResponse(outputs=converted_results)

@@ -1,5 +1,9 @@
 import tensorflow as tf
+from tensorflow.python.framework import dtypes
+from tensorflow.core.framework import tensor_pb2
+
 import numpy as np
+import hydro_serving_grpc as hs
 
 
 def convert_to_python(data):
@@ -39,3 +43,26 @@ def load_and_optimize(model_path):
             for out_name, out in sig.outputs.items():
                 signatures["outputs"][out_name] = temp_sess.graph.get_tensor_by_name(out_name)
         print("Loaded a model with signature: {}".format(signatures))
+
+
+def make_tensor_proto(values, dtype=None, shape=None):
+    if isinstance(values, hs.TensorProto):
+        return values
+
+    dtype = dtypes.as_dtype(dtype)
+
+    if isinstance(values, np.ndarray):
+        if dtype == tf.float32:
+            return tensor_pb2.TensorProto(
+                dtype=dtype.as_datatype_enum,
+                tensor_shape=shape.as_proto(),
+                float_val=values.flatten()
+            )
+        elif dtype == tf.double:
+            return tensor_pb2.TensorProto(
+                dtype=dtype.as_datatype_enum,
+                tensor_shape=shape.as_proto(),
+                double_val=values.flatten()
+            )
+    else:
+        return tf.make_tensor_proto(values, dtype=dtype, shape=shape)
