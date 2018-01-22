@@ -5,7 +5,6 @@ from tf_runtime_service import TFRuntimeService
 
 
 class TensorflowRuntime:
-    _ONE_DAY_IN_SECONDS = 60 * 60 * 24
 
     def __init__(self, model_path):
         self.port = None

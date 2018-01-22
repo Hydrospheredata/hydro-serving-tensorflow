@@ -1,16 +1,16 @@
 import os
 from TensorflowRuntime import TensorflowRuntime
 import time
-
+_ONE_DAY_IN_SECONDS = 60 * 60 * 24
 PORT = os.getenv("APP_GRPC_PORT", "9090")
 
 if __name__ == '__main__':
     print("Reading the model...")
-    runtime = TensorflowRuntime("/model")
+    runtime = TensorflowRuntime("/tmp/mnist_serving/1")
     print("Runtime is ready to serve...")
     runtime.start(port=PORT)
     try:
         while True:
-            time.sleep(TensorflowRuntime._ONE_DAY_IN_SECONDS)
+            time.sleep(_ONE_DAY_IN_SECONDS)
     except KeyboardInterrupt:
         runtime.stop()
