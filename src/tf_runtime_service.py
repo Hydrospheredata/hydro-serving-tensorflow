@@ -7,9 +7,9 @@ import grpc
 
 class TFRuntimeService(hs.PredictionServiceServicer):
     def __init__(self, model_path):
-        self.model_path = model_path
+        self.model_path = "{}/files".format(model_path)
 
-        self.model = LoadedModel.load(model_path)
+        self.model = LoadedModel.load(self.model_path)
 
     def Predict(self, request, context):
         print("Received inference request: {}".format(request))

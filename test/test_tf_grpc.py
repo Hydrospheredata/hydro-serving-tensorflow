@@ -52,11 +52,11 @@ class RuntimeTests(unittest.TestCase):
                 model_name="tf_summator",
                 signatures=signatures
             )
-            with open('test/model_defs/tf_summator.protobin', 'wb') as f:
+            with open('models/tf_summator/contract.protobin', 'wb') as f:
                 f.write(model_def.SerializeToString())
-            with open('test/model_defs/tf_summator.prototxt', 'w') as f:
+            with open('models/tf_summator/contract.prototxt', 'w') as f:
                 f.write(str(model_def))
-            with open('test/model_defs/tf_summator.original.prototxt', 'w') as f:
+            with open('models/tf_summator/contract.original.prototxt', 'w') as f:
                 f.write(str(meta_graph))
 
     def test_correct_signature(self):
