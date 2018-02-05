@@ -1,27 +1,16 @@
 ARG TF_IMAGE_VERSION=latest-py3
 FROM tensorflow/tensorflow:${TF_IMAGE_VERSION}
 
-ARG SIDECAR_VERSION=0.0.1
+ENV APP_PORT=9090
+ENV SIDECAR_PORT=8080
+ENV SIDECAR_HOST=localhost
+ENV MODEL_DIR=/model
 
-ENV SIDECAR_HTTP_PORT=8080
-ENV APP_HTTP_PORT=9090
-ENV APP_START_SCRIPT=/app/start.sh
+LABEL DEPLOYMENT_TYPE=APP
 
 ADD . /app/
-ADD http://repo.hydrosphere.io/hydrosphere/static/hydro-serving-sidecar-install-$SIDECAR_VERSION.sh /app/sidecar.sh
-
-WORKDIR /app
-
-RUN apt update && \
-    apt install -y curl && \
-    chmod +x /app/sidecar.sh && sync && \
-    chmod +x /app/start.sh && sync && \
-    ./sidecar.sh --target /hydro-serving/sidecar -- ubuntu && \
-    rm -rf sidecar.sh && rm -rf /var/cache/apk/*
-
-RUN pip install -r requirements.txt
+RUN pip install -r /app/requirements.txt
 
 WORKDIR /app/src
 
-HEALTHCHECK --interval=30s --timeout=3s --retries=3 CMD curl -f http://localhost:$APP_HTTP_PORT/health || exit 1
 CMD ["/hydro-serving/sidecar/start.sh"]
