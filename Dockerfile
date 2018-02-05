@@ -9,8 +9,8 @@ ENV MODEL_DIR=/model
 LABEL DEPLOYMENT_TYPE=APP
 
 ADD . /app/
-RUN pip install -r /app/requirements.txt
+RUN pip install -r /app/requirements.txt && chmod +x /app/start.sh
 
 WORKDIR /app/src
 
-CMD ["/hydro-serving/sidecar/start.sh"]
+CMD ["/app/start.sh"]
