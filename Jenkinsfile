@@ -1,9 +1,9 @@
 //Tensorflow Version
 versions = [
-        "tf-1.1.0",
-        "tf-1.2.0",
-        "tf-1.3.0",
-        "tf-1.4.0"
+        "1.1.0",
+        "1.2.0",
+        "1.3.0",
+        "1.4.0"
 ]
 
 
@@ -104,7 +104,7 @@ node("JenkinsOnDemand") {
     stage('Build/Test/Deploy') {
         for (int i = 0; i < versions.size(); i++) { //TODO switch to each after JENKINS-26481
             def ver = versions.get(i)
-            sh "make ${ver}"
+            sh "make tf-${ver}"
         }
     }
 
