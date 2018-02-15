@@ -8,6 +8,7 @@ import sys
 sys.path.append("../src")
 from TensorflowRuntime import TensorflowRuntime
 import hydro_serving_grpc as hs
+import logging
 from tf_runtime_service import TFRuntimeService
 
 
@@ -124,4 +125,5 @@ class RuntimeTests(unittest.TestCase):
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
     unittest.main()

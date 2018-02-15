@@ -1,6 +1,6 @@
 import tensorflow as tf
 import hydro_serving_grpc as hs
-
+import logging
 
 class Signature:
     def __init__(self, name, inputs: dict, outputs: dict):
