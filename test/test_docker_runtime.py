@@ -8,16 +8,16 @@ import os
 
 
 class DockerTests(unittest.TestCase):
-    def test_docker_runtime(self):
+    def tensorflow_case(self, tf_version):
         docker_client = docker.from_env()
         container = docker_client.containers.run(
-            "hydrosphere/serving-grpc-runtime-tensorflow-latest-cpu:0.0.1",
+            "hydrosphere/serving-runtime-tensorflow:{}-latest".format(tf_version),
             remove=True, detach=True,
             ports={'9090/tcp': 9090},
             volumes={os.path.abspath('models/tf_summator'): {'bind': '/model', 'mode': 'ro'}}
         )
+        time.sleep(15)
         try:
-            time.sleep(5)
             channel = grpc.insecure_channel('localhost:9090')
             client = hs.PredictionServiceStub(channel=channel)
             a = hs.TensorProto()
@@ -47,6 +47,19 @@ class DockerTests(unittest.TestCase):
             print("Container logs:")
             print(container.logs().decode("utf-8"))
             container.stop()
+            time.sleep(15)
+
+    def test_110(self):
+        self.tensorflow_case("1.1.0")
+
+    def test_120(self):
+        self.tensorflow_case("1.2.0")
+
+    def test_130(self):
+        self.tensorflow_case("1.3.0")
+
+    def test_140(self):
+        self.tensorflow_case("1.4.0")
 
 
 if __name__ == "__main__":
