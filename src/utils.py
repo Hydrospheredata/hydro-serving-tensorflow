@@ -1,7 +1,7 @@
 import tensorflow as tf
 from tensorflow.python.framework import dtypes
 from tensorflow.core.framework import tensor_pb2
-
+from tensorflow.contrib.util import make_tensor_proto as mk_tf_tensor
 import numpy as np
 import hydro_serving_grpc as hs
 
@@ -65,4 +65,4 @@ def make_tensor_proto(values, dtype=None, shape=None):
                 double_val=values.flatten()
             )
     else:
-        return tf.make_tensor_proto(values, dtype=dtype, shape=shape)
+        return mk_tf_tensor(values, dtype=dtype, shape=shape)
