@@ -4,7 +4,7 @@ import time
 import logging
 
 _ONE_DAY_IN_SECONDS = 60 * 60 * 24
-PORT = os.getenv("APP_GRPC_PORT", "9090")
+PORT = os.getenv("APP_PORT", "9090")
 
 logging.basicConfig(level=logging.INFO)
 
