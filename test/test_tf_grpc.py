@@ -1,5 +1,6 @@
 import unittest
 import tensorflow as tf
+import numpy as np
 from concurrent import futures
 import time
 import grpc
@@ -59,6 +60,40 @@ class RuntimeTests(unittest.TestCase):
                 f.write(str(model_def))
             with open('models/tf_summator/contract.original.prototxt', 'w') as f:
                 f.write(str(meta_graph))
+
+    def test_lstm(self):
+        runtime = TensorflowRuntime("models/lstm")
+        runtime.start(port="9090")
+        results = []
+        try:
+            time.sleep(1)
+
+            channel = grpc.insecure_channel('localhost:9090')
+            client = hs.PredictionServiceStub(channel=channel)
+
+            shape = hs.TensorShapeProto(dim=[
+                hs.TensorShapeProto.Dim(size=-1),
+                hs.TensorShapeProto.Dim(size=1),
+                hs.TensorShapeProto.Dim(size=24)
+            ])
+            data_tensor = hs.TensorProto(
+                dtype=hs.DT_FLOAT,
+                tensor_shape=shape,
+                float_val=[x for x in np.random.random(24).tolist()]
+            )
+            for x in range(1, 5):
+                request = hs.PredictRequest(
+                    model_spec=hs.ModelSpec(signature_name="infer"),
+                    inputs={
+                        "data": data_tensor
+                    }
+                )
+
+                result = client.Predict(request)
+                results.append(result)
+        finally:
+            runtime.stop()
+        print(results)
 
     def test_correct_signature(self):
         runtime = TensorflowRuntime("models/tf_summator")

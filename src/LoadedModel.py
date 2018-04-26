@@ -1,6 +1,5 @@
 import tensorflow as tf
-import hydro_serving_grpc as hs
-import logging
+
 
 class Signature:
     def __init__(self, name, inputs: dict, outputs: dict):
@@ -16,16 +15,22 @@ class LoadedModel:
     def __init__(self):
         self.model_path = None
         self.signatures = {}
-        self.session = None
+        self.state_placeholders = []
+        self.zero_states = []
         self.contract = None
 
     def __str__(self) -> str:
-        return "LoadedModel from {} with signatures: {}\n".format(self.model_path,
-                                                                  list(map(lambda x: str(x), self.signatures)))
+        signatures = list(map(lambda x: str(x), self.signatures))
+        if self.is_stateful():
+            return "Stateful LoadedModel from {} with signatures: {}\n".format(self.model_path, signatures)
+        else:
+            return "Stateless LoadedModel from {} with signatures: {}\n".format(self.model_path, signatures)
+
+    def is_stateful(self):
+        return len(self.state_placeholders) > 0
 
     @staticmethod
-    def load(path: str):
-        session = tf.Session()
+    def load(session, path: str):
         meta_graph = tf.saved_model.loader.load(session, [tf.saved_model.tag_constants.SERVING], path)
         signatures = {}
         for name, sig in meta_graph.signature_def.items():
@@ -43,5 +48,7 @@ class LoadedModel:
         model.model_path = path
         model.signatures = signatures
         model.session = session
+        model.state_placeholders = session.graph.get_collection("h_state_placeholders")  # FIXME move constant to a lib
+        model.zero_states = session.graph.get_collection("h_zero_states")  # FIXME move constant to a lib
         print("Loaded a model: {}".format(model))
         return model
