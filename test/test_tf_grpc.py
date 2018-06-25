@@ -105,9 +105,9 @@ class RuntimeTests(unittest.TestCase):
             channel = grpc.insecure_channel('localhost:9090')
             client = hs.PredictionServiceStub(channel=channel)
             a = hs.TensorProto()
-            a.ParseFromString(tf.contrib.util.make_tensor_proto(3, dtype=tf.int8).SerializeToString())
+            a.ParseFromString(tf.contrib.util.make_tensor_proto(3, dtype=tf.int8, shape=[]).SerializeToString())
             b = hs.TensorProto()
-            b.ParseFromString(tf.contrib.util.make_tensor_proto(2, dtype=tf.int8).SerializeToString())
+            b.ParseFromString(tf.contrib.util.make_tensor_proto(2, dtype=tf.int8, shape=[]).SerializeToString())
             request = hs.PredictRequest(
                 model_spec=hs.ModelSpec(signature_name="add"),
                 inputs={

@@ -2,9 +2,11 @@ import hydro_serving_grpc as hs
 
 from LoadedModel import LoadedModel
 import tensorflow as tf
-import utils
+import tensorflow.contrib
+from utils import fixed_make_tensor_proto
 import grpc
 import logging
+import uuid
 
 
 class TFRuntimeService(hs.PredictionServiceServicer):
@@ -19,17 +21,18 @@ class TFRuntimeService(hs.PredictionServiceServicer):
             self.state_fetch = {x.name: x for x in self.model.state_placeholders}
 
     def Predict(self, request, context):
-        self.logger.info("Received inference request: {}".format(request))
+        rid = uuid.uuid4()
+        self.logger.info("[{}] Received inference request: {}".format(rid, request))
         signature_name = request.model_spec.signature_name
         if signature_name in self.model.signatures:
             sig = self.model.signatures[signature_name]
         else:
-            msg = "{} signature is not present in the model".format(signature_name)
+            msg = "[{}] {} signature is not present in the model".format(rid, signature_name)
             context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
             context.set_details(msg)
             self.logger.error(msg)
             return hs.PredictResponse()
-        self.logger.debug("Using {} signature".format(sig.name))
+        self.logger.debug("[{}] Using {} signature".format(rid, sig.name))
         fetch = sig.outputs
 
         feed = {}
@@ -43,13 +46,16 @@ class TFRuntimeService(hs.PredictionServiceServicer):
 
         result = self.model.session.run(fetch, feed_dict=feed)
 
+        self.logger.info("[{}] raw result: {}".format(rid, result))
         converted_results = {}
         for out_key, out_tensor in sig.outputs.items():
             out_value = result[out_key]
-            original_tensor = utils.make_tensor_proto(out_value, dtype=out_tensor.dtype, shape=out_tensor.shape)
+            self.logger.info("[{}] Assembling tensor: dtype={} shape={} data={}".format(rid, out_tensor.dtype, out_tensor.shape, out_value))
+
+            original_tensor = fixed_make_tensor_proto(out_value, dtype=out_tensor.dtype, shape=out_tensor.shape)
             tensor_proto = hs.TensorProto()
             tensor_proto.ParseFromString(original_tensor.SerializeToString())
-            self.logger.info("Answer: {}".format(tensor_proto))
+            self.logger.info("[{}] Answer: {}".format(rid, tensor_proto))
             converted_results[out_key] = tensor_proto
 
         for i, v in enumerate(self.model.state_placeholders):
