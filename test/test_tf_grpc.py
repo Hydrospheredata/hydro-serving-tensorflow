@@ -152,7 +152,7 @@ class RuntimeTests(unittest.TestCase):
             client.Predict(request)
         except grpc.RpcError as ex:
             self.assertEqual(ex.code(), grpc.StatusCode.INVALID_ARGUMENT)
-            self.assertEqual(ex.details(), "missing_sig signature is not present in the model")
+            assert("missing_sig signature is not present in the model" in ex.details())
         except Exception as ex :
             self.fail("Unexpected exception: {}".format(ex))
         finally:

@@ -216,20 +216,7 @@ def fixed_make_tensor_proto(values, dtype=None, shape=None, verify_shape=False):
         shape = nparray.shape
         is_same_size = True
         shape_size = nparray.size
-    else:
-        shape = [int(dim) for dim in shape]
-        shape_size = np.prod(shape, dtype=np.int64)
-        is_same_size = shape_size == nparray.size
-
-        if verify_shape:
-            if not nparray.shape == tuple(shape):
-                raise TypeError("Expected Tensor's shape: %s, got %s." %
-                                (tuple(shape), nparray.shape))
-
-        if nparray.size > shape_size:
-            raise ValueError(
-                "Too many elements provided. Needed at most %d, but received %d" %
-                (shape_size, nparray.size))
+    # note: removed else branch since we also deal with ? dimensions
 
     tensor_proto = tensor_pb2.TensorProto(
         dtype=numpy_dtype.as_datatype_enum,
