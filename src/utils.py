@@ -329,6 +329,7 @@ def fixed_make_ndarray(tensor):
                 num_elements).reshape(shape)
         else:
             return np.fromiter(tensor.int64_val, dtype=dtype).reshape(shape)
+    # uint32_val
     elif tensor_dtype == dtypes.uint32:
         if len(tensor.uint32_val) == 1:
             return np.repeat(
@@ -336,6 +337,14 @@ def fixed_make_ndarray(tensor):
                 num_elements).reshape(shape)
         else:
             return np.fromiter(tensor.uint32_val, dtype=dtype).reshape(shape)
+    # uint64_val
+    elif tensor_dtype == dtypes.uint64:
+        if len(tensor.uint64_val) == 1:
+            return np.repeat(
+                np.array(tensor.uint64_val[0], dtype=dtype),
+                num_elements).reshape(shape)
+        else:
+            return np.fromiter(tensor.uint64_val, dtype=dtype).reshape(shape)
     # string_val
     elif tensor_dtype == dtypes.string:
         if len(tensor.string_val) == 1:
