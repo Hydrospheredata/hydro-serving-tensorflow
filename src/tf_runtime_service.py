@@ -2,8 +2,8 @@ import hydro_serving_grpc as hs
 
 from LoadedModel import LoadedModel
 import tensorflow as tf
-import tensorflow.contrib
-from utils import fixed_make_tensor_proto
+import tensorflow.contrib # DONT DELETE import in order to initialize contrib modules
+from utils import fixed_make_tensor_proto, fixed_make_ndarray
 import grpc
 import logging
 import uuid
@@ -38,7 +38,7 @@ class TFRuntimeService(hs.PredictionServiceServicer):
         feed = {}
         for (k, v) in sig.inputs.items():
             tensor = request.inputs[k]
-            feed[v.name] = tf.contrib.util.make_ndarray(tensor)
+            feed[v.name] = fixed_make_ndarray(tensor)
 
         if self.model.is_stateful():
             fetch = {**fetch, **self.state_fetch}
