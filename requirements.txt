@@ -1,5 +1,5 @@
-tensorflow>=1.1.0
+tensorflow>=1.7.0
 grpcio==1.9.1
-protobuf==3.5.1
-hydro-serving-grpc==0.1.1
+protobuf~=3.6
+hydro-serving-grpc==0.1.21
 docker==3.0.1

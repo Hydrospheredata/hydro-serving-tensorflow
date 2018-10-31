@@ -3,7 +3,7 @@ IMAGE_TAG=latest
 tf: tf-latest
 
 .PHONY: tf-all
-tf-all: tf-1.1.0 tf-1.2.0 tf-1.3.0 tf-1.4.0 tf-1.5.0 tf-1.6.0 tf-1.7.0
+tf-all: tf-1.6.0 tf-1.7.0 tf-1.8.0 tf-1.9.0 tf-1.10.0 tf-1.11.0
 
 .PHONY: tf-%
 tf-%:
