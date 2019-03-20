@@ -1,13 +1,12 @@
 PYTHON_EXEC=python
-IMAGE_TAG=latest
-tf: tf-latest
+VERSION=latest
 
 .PHONY: tf-all
 tf-all: tf-1.1.0 tf-1.2.0 tf-1.3.0 tf-1.4.0 tf-1.5.0 tf-1.6.0 tf-1.7.0
 
 .PHONY: tf-%
 tf-%:
-	$(eval RUNTIME_NAME = hydrosphere/serving-runtime-tensorflow:$*-$(IMAGE_TAG))
+	$(eval RUNTIME_NAME = hydrosphere/serving-runtime-tensorflow-$*:$(VERSION))
 	docker build --no-cache --build-arg TF_IMAGE_VERSION=$*-py3 -t $(RUNTIME_NAME) .
 
 run:
