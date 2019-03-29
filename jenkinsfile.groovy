@@ -10,7 +10,9 @@ def versions = [
 	"1.8.0",
 	"1.9.0",
 	"1.10.0",
-	"1.11.0"
+	"1.11.0",
+	"1.12.0",
+	"1.13.0"
 ]
 
 def repository = 'hydro-serving-tensorflow'
