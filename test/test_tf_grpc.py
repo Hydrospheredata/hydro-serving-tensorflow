@@ -1,16 +1,12 @@
 import unittest
 import tensorflow as tf
 import numpy as np
-from concurrent import futures
 import time
 import grpc
-import sys
 
-sys.path.append("../src")
-from TensorflowRuntime import TensorflowRuntime
+from src.TensorflowRuntime import TensorflowRuntime
 import hydro_serving_grpc as hs
 import logging
-from tf_runtime_service import TFRuntimeService
 
 
 class RuntimeTests(unittest.TestCase):
@@ -62,13 +58,13 @@ class RuntimeTests(unittest.TestCase):
                 f.write(str(meta_graph))
 
     def test_lstm(self):
-        runtime = TensorflowRuntime("models/lstm")
-        runtime.start(port="9090")
+        runtime = TensorflowRuntime("test/models/lstm", port=0)
+        runtime.start()
         results = []
         try:
             time.sleep(1)
-
-            channel = grpc.insecure_channel('localhost:9090')
+            addr = "localhost:{}".format(runtime.port)
+            channel = grpc.insecure_channel(addr)
             client = hs.PredictionServiceStub(channel=channel)
 
             shape = hs.TensorShapeProto(dim=[
@@ -96,13 +92,13 @@ class RuntimeTests(unittest.TestCase):
         print(results)
 
     def test_correct_signature(self):
-        runtime = TensorflowRuntime("models/tf_summator")
-        runtime.start(port="9090")
+        runtime = TensorflowRuntime("test/models/tf_summator", port=0)
+        runtime.start()
 
         try:
             time.sleep(1)
-
-            channel = grpc.insecure_channel('localhost:9090')
+            addr = "localhost:{}".format(runtime.port)
+            channel = grpc.insecure_channel(addr)
             client = hs.PredictionServiceStub(channel=channel)
             a = hs.TensorProto()
             a.ParseFromString(tf.contrib.util.make_tensor_proto(3, dtype=tf.int8, shape=[]).SerializeToString())
@@ -131,12 +127,13 @@ class RuntimeTests(unittest.TestCase):
             runtime.stop()
 
     def test_incorrect_signature(self):
-        runtime = TensorflowRuntime("models/tf_summator")
-        runtime.start(port="9090")
+        runtime = TensorflowRuntime("test/models/tf_summator", port=0)
+        runtime.start()
 
         try:
             time.sleep(1)
-            channel = grpc.insecure_channel('localhost:9090')
+            addr = "localhost:{}".format(runtime.port)
+            channel = grpc.insecure_channel(addr)
             client = hs.PredictionServiceStub(channel=channel)
             a = hs.TensorProto()
             a.ParseFromString(tf.contrib.util.make_tensor_proto(3, dtype=tf.int8).SerializeToString())

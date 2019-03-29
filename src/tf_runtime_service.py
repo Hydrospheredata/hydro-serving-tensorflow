@@ -22,7 +22,7 @@ class TFRuntimeService(hs.PredictionServiceServicer):
 
     def Predict(self, request, context):
         rid = uuid.uuid4()
-        self.logger.info("[{}] Received inference request: {}".format(rid, request))
+        self.logger.info("[{}] Received inference request: {}".format(rid, request)[:512])
         signature_name = request.model_spec.signature_name
         if signature_name in self.model.signatures:
             sig = self.model.signatures[signature_name]
@@ -46,7 +46,7 @@ class TFRuntimeService(hs.PredictionServiceServicer):
 
         result = self.model.session.run(fetch, feed_dict=feed)
 
-        self.logger.info("[{}] raw result: {}".format(rid, result))
+        self.logger.info("[{}] raw result: {}".format(rid, result)[:512])
         converted_results = {}
         for out_key, out_tensor in sig.outputs.items():
             out_value = result[out_key]
@@ -55,7 +55,7 @@ class TFRuntimeService(hs.PredictionServiceServicer):
             original_tensor = fixed_make_tensor_proto(out_value, dtype=out_tensor.dtype, shape=out_tensor.shape)
             tensor_proto = hs.TensorProto()
             tensor_proto.ParseFromString(original_tensor.SerializeToString())
-            self.logger.info("[{}] Answer: {}".format(rid, tensor_proto))
+            self.logger.info("[{}] Answer: {}".format(rid, tensor_proto)[:512])
             converted_results[out_key] = tensor_proto
 
         for i, v in enumerate(self.model.state_placeholders):
