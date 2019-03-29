@@ -5,8 +5,7 @@ tf-all: tf-1.7.0 tf-1.8.0 tf-1.9.0 tf-1.10.0 tf-1.11.0 tf-1.12.0 tf-1.13.1
 
 .PHONY: tf-%
 tf-%:
-	$(eval RUNTIME_V = $(shell echo $* | cut -f1-2 -d'.'))
-	$(eval RUNTIME_NAME = hydrosphere/serving-runtime-tensorflow-$(RUNTIME_V):$(VERSION))
+	$(eval RUNTIME_NAME = hydrosphere/serving-runtime-tensorflow-$*:$(VERSION))
 	docker build --build-arg TF_IMAGE_VERSION=$*-py3 -t $(RUNTIME_NAME) .
 
 run:
