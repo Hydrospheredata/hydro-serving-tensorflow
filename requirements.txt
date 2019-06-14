@@ -1,4 +1,4 @@
 grpcio~=1.19
 pytest~=4.3
 docker~=3.7
-hydro-serving-grpc==2.0.0rc7.dev1
+hydro-serving-grpc==2.0.4rc3

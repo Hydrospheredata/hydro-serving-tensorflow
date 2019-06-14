@@ -14,11 +14,21 @@ class TFRuntimeService(hs.PredictionServiceServicer):
         self.model_path = "{}/files".format(model_path)
         self.logger = logging.getLogger("TensorflowRuntime")
         self.session = tf.Session()
-        self.model = LoadedModel.load(self.session, self.model_path)
+        self.status = "UNKNOWN"
+        self.status_message = "Initializing"
+        self.error = None
+        try:
+            self.model = LoadedModel.load(self.session, self.model_path)
 
-        if self.model.is_stateful():
-            self.state = {x.name: self.session.run(x) for x in self.model.zero_states}
-            self.state_fetch = {x.name: x for x in self.model.state_placeholders}
+            if self.model.is_stateful():
+                self.state = {x.name: self.session.run(x) for x in self.model.zero_states}
+                self.state_fetch = {x.name: x for x in self.model.state_placeholders}
+            self.status = "SERVING"
+            self.status_message = "Loaded and ready to go"
+        except Exception as err:
+            self.error = err
+            self.status = "NOT_SERVING"
+            self.status_message = str(err)
 
     def Predict(self, request, context):
         rid = uuid.uuid4()
@@ -63,3 +73,11 @@ class TFRuntimeService(hs.PredictionServiceServicer):
             self.state[state_name.name] = result[v.name]
 
         return hs.PredictResponse(outputs=converted_results)
+
+    def Status(self, request, context):
+        """Ask for a status. Could contain explanation.
+        """
+        return hs.StatusResponse(
+            status = self.status,
+            message = self.status_message
+        )
